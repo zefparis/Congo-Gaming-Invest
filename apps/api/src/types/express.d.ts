@@ -1,7 +1,12 @@
-﻿import 'express-serve-static-core';
+import 'express';
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    id?: string;
+declare global {
+  namespace Express {
+    interface Request {
+      /** Correlation ID injecté par le middleware */
+      id?: string;
+    }
   }
 }
+
+export {};

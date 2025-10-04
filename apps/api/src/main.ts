@@ -1,4 +1,4 @@
-﻿import 'reflect-metadata';
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
@@ -20,19 +20,20 @@ async function bootstrap() {
 
   // Global filters
   app.useGlobalFilters(new HttpExceptionFilter());
-
   // CORS (filtre valeurs vides)
   const nestCfg = app.get(NestConfig);
   const corsCsv = nestCfg.get<string>('CORS_ORIGIN', '') ?? '';
   const origins = corsCsv.split(',').map(s => s.trim()).filter(Boolean);
+  if (!origins.length) {
+    // TODO: préciser l'allowlist finale avec les domaines prod (ajout auto des Vercel domains pour la démo)
+    origins.push('https://congo-gaming-invest.vercel.app', 'https://*.vercel.app');
+  }
+
   app.enableCors({
-    origin: origins.length ? origins : true,
+    origin: origins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
-
-  // Swagger
-  setupSwagger(app);
 
   const port = nestCfg.get<number>('PORT', 4000);
   await app.listen(port);

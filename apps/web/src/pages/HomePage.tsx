@@ -27,7 +27,7 @@ const featureHighlights = [
 const complianceBadges = [
   {
     label: 'Licence nationale de jeux de hasard',
-    detail: 'Octroyée en 2016 par le ministère de tutelle',
+    detail: 'Octroyée en 2016 par le Ministere des sports et loisirs ainsi que le Ministere des finance en partenariat avec SONAL',
   },
   {
     label: '2 certifications ARPTC',

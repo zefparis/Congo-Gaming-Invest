@@ -28,5 +28,6 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "collection": "@nestjs/schematics",
   "entryFile": "src/main",
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
