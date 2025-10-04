@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Bingo Artwork</title>
+  <desc id="desc">Colorful balls to represent the Bingo game</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)" rx="32" />
+  <g transform="translate(140 180)">
+    <circle r="70" fill="#fef3c7" />
+    <text x="0" y="18" text-anchor="middle" font-family="'Inter', sans-serif" font-size="64" font-weight="700" fill="#1f2937">B</text>
+  </g>
+  <g transform="translate(320 220)">
+    <circle r="92" fill="#dcfce7" />
+    <text x="0" y="24" text-anchor="middle" font-family="'Inter', sans-serif" font-size="72" font-weight="700" fill="#065f46">15</text>
+  </g>
+  <g transform="translate(480 150)">
+    <circle r="64" fill="#fee2e2" />
+    <text x="0" y="18" text-anchor="middle" font-family="'Inter', sans-serif" font-size="48" font-weight="700" fill="#7f1d1d">G</text>
+  </g>
+  <text x="48" y="308" font-family="'Inter', sans-serif" font-size="42" fill="rgba(241,245,249,0.92)" font-weight="700">Bingo</text>
+  <text x="48" y="340" font-family="'Inter', sans-serif" font-size="18" fill="rgba(226,232,240,0.85)">Quick Draw · RTP 95%</text>
+</svg>

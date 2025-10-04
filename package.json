@@ -1,0 +1,19 @@
+{
+  "name": "congo-gaming",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB -c cyan,magenta \"pnpm --filter @cg/api start:dev\" \"pnpm --filter @cg/web dev\"",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "pnpm@8.10.0"
+}

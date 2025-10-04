@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES2022",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@cg/shared/*": ["../../packages/shared/src/*"]
+    },
+    "types": ["node", "jest"],
+    "plugins": [
+      {
+        "name": "@nestjs/swagger",
+        "introspectComments": true
+      }
+    ]
+  },
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "collection": "@nestjs/schematics",
+  "entryFile": "src/main",
+  "exclude": ["node_modules", "dist"]
+}

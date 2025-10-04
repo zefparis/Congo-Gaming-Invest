@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Congo Gaming Default Artwork</title>
+  <desc id="desc">Neutral background used when a game illustration is unavailable</desc>
+  <defs>
+    <linearGradient id="defaultGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="32" fill="url(#defaultGradient)" />
+  <g transform="translate(320 180)" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-120 80 L0 -60 L120 80 Z" opacity="0.4" />
+    <circle cx="0" cy="-20" r="46" opacity="0.6" />
+    <path d="M-60 60 Q0 -10 60 60" opacity="0.8" />
+  </g>
+</svg>

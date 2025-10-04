@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Aviator Artwork</title>
+  <desc id="desc">Stylised illustration for the Aviator crash game</desc>
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <linearGradient id="trail" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.6" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#sky)" rx="32" />
+  <circle cx="520" cy="80" r="36" fill="#fde68a" opacity="0.9" />
+  <path d="M120,280 Q280,120 520,140" stroke="url(#trail)" stroke-width="26" stroke-linecap="round" fill="none" />
+  <g transform="translate(300 170)">
+    <path d="M-28 0 L80 -20 L82 20 L-28 0" fill="#fbbf24" />
+    <path d="M-36 -6 L-68 -10 A6 6 0 0 0 -74 -4 L-86 28 A6 6 0 0 0 -80 36 L-46 28 L-36 -6" fill="#f8fafc" />
+    <circle cx="40" cy="0" r="14" fill="#0f172a" opacity="0.75" />
+  </g>
+  <text x="48" y="308" font-family="'Inter', sans-serif" font-size="42" fill="rgba(241,245,249,0.92)" font-weight="700">Aviator</text>
+  <text x="48" y="340" font-family="'Inter', sans-serif" font-size="18" fill="rgba(226,232,240,0.85)">Crash Game · RTP 97%</text>
+</svg>

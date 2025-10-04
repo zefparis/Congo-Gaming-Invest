@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="title desc">
+  <title id="title">Profil Congo Gaming</title>
+  <desc id="desc">Avatar générique pour l'espace joueur Congo Gaming</desc>
+  <defs>
+    <linearGradient id="avatarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#4338ca" />
+    </linearGradient>
+  </defs>
+  <circle cx="120" cy="120" r="120" fill="url(#avatarGradient)" />
+  <circle cx="120" cy="96" r="52" fill="rgba(15,23,42,0.88)" />
+  <path d="M40 214c22-42 48-62 80-62s58 20 80 62" fill="rgba(15,23,42,0.82)" />
+  <circle cx="100" cy="96" r="8" fill="#38bdf8" />
+  <circle cx="140" cy="96" r="8" fill="#38bdf8" />
+  <path d="M96 118c6 12 18 18 24 18s18-6 24-18" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" fill="none" />
+</svg>
