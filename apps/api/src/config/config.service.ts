@@ -51,7 +51,7 @@ export class ConfigService {
   }
 
   get corsOrigins(): string[] {
-    const raw = this.config.get<string>('CORS_ORIGIN') ?? '';
+    const raw = this.config.get<string>('CORS_ALLOWED_ORIGINS') ?? '';
     return raw.split(',').map(s => s.trim()).filter(Boolean);
   }
 
