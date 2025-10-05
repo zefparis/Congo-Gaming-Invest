@@ -1,4 +1,5 @@
-const API_BASE = '/api';
+const rawBase = import.meta.env.VITE_API_BASE_URL;
+const API_BASE = (rawBase && rawBase.trim() !== '' ? rawBase : '/api').replace(/\/$/, '');
 
 export interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
   skipAuth?: boolean;
@@ -28,7 +29,8 @@ export async function apiRequest<TResponse = unknown>(
     bodyToSend = JSON.stringify(body);
   }
 
-  const response = await fetch(`${API_BASE}${path}`, {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const response = await fetch(`${API_BASE}${normalizedPath}`, {
     ...rest,
     headers: fetchHeaders,
     body: bodyToSend,
