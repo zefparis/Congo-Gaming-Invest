@@ -1,3 +1,4 @@
+// app.module.ts
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -11,7 +12,7 @@ import { GamesModule } from './games/games.module';
 
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ThrottlerBehindProxyGuard } from './common/guards/throttler-behind-proxy.guard';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { JwtAuthOptionalGuard } from './common/guards/jwt-auth-optional.guard'; // ✅ new
 import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
 import { HealthController } from './health/health.controller';
 
@@ -33,8 +34,8 @@ import { HealthController } from './health/health.controller';
   controllers: [HealthController],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
-    { provide: APP_GUARD,  useClass: JwtAuthGuard },
-    { provide: APP_GUARD,  useClass: ThrottlerBehindProxyGuard },
+    { provide: APP_GUARD,  useClass: JwtAuthOptionalGuard }, // ✅ fix ici
+    { provide: APP_GUARD,  useClass: ThrottlerBehindProxyGuard }, // ✅ toujours là
   ],
 })
 export class AppModule implements NestModule {
