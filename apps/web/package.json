@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-	"prebuild": "pnpm --filter @cg/shared build"
+    "prebuild": "pnpm --filter @cg/shared build",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
