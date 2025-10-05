@@ -26,10 +26,22 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
     this.setupProcessHandlers();
   }
 
+  private validateDatabaseUrl(url: string): URL {
+    if (!url) {
+      throw new Error('Database URL is not defined. Please check your configuration.');
+    }
+    
+    try {
+      return new URL(url);
+    } catch (error) {
+      throw new Error(`Invalid database URL: ${url}. Please ensure it follows the format: postgresql://user:password@host:port/database`);
+    }
+  }
+
   private initializePool() {
     try {
-      const dbUrl = new URL(this.cfg.databaseUrl);
-      const safeDbUrl = `${dbUrl.protocol}//${dbUrl.username}:*****@${dbUrl.hostname}${dbUrl.pathname}`;
+      const dbUrl = this.validateDatabaseUrl(this.cfg.databaseUrl);
+      const safeDbUrl = `${dbUrl.protocol}//${dbUrl.username ? dbUrl.username + ':*****@' : ''}${dbUrl.hostname}${dbUrl.pathname}`;
 
       logger.log(`Connecting to DB: ${safeDbUrl}`);
 
