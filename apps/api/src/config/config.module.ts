@@ -19,6 +19,7 @@ const EnvSchema = z.object({
   LOG_LEVEL: z.string().optional(),
   THROTTLE_TTL: z.coerce.number().optional(),
   THROTTLE_LIMIT: z.coerce.number().optional(),
+  API_PREFIX: z.string().optional(),
 });
 
 @Global()

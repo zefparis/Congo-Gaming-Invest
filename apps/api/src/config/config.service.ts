@@ -65,4 +65,8 @@ export class ConfigService {
   get throttleLimit(): number {
     return Number(this.config.get('THROTTLE_LIMIT') ?? 30);
   }
+
+  get apiPrefix(): string {
+    return this.config.get<string>('API_PREFIX') ?? 'v1';
+  }
 }
