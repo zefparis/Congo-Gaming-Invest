@@ -115,7 +115,7 @@ importers:
   apps/web:
     dependencies:
       '@cg/shared':
-        specifier: workspace:*
+        specifier: '*'
         version: link:../../packages/shared
       react:
         specifier: ^18.3.1
