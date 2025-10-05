@@ -21,7 +21,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@cg/shared": ["../../packages/shared/src"]
+      "@cg/shared": ["../../packages/shared/src/index.ts"],
+      "@cg/shared/*": ["../../packages/shared/src/*"]
     }
   },
   "include": ["src"],
