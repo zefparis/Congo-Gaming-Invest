@@ -50,8 +50,10 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
       const result = await this.pool.query('SELECT 1');
       const duration = Date.now() - start;
       logger.log(`Database connection test successful (${duration}ms)`, result.rows[0]);
-    } catch (error) {
-      logger.error('Database connection test failed', error);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error during connection test';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      logger.error('Database connection test failed', { error: errorMessage, stack: errorStack });
       throw error; // Re-throw to prevent app from starting
     }
   }
@@ -61,8 +63,9 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
     try {
       await this.pool.end();
       logger.log('Database pool closed');
-    } catch (error) {
-      logger.error('Error closing database pool', error);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error while closing pool';
+      logger.error('Error closing database pool', { error: errorMessage });
     }
   }
 
@@ -82,11 +85,14 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
       const duration = Date.now() - start;
       logger.debug(`Query executed in ${duration}ms`);
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown database error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      
       logger.error('Database query error', {
         query: queryText,
-        error: error.message,
-        stack: error.stack,
+        error: errorMessage,
+        stack: errorStack,
       });
       throw error;
     }
