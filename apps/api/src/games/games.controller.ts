@@ -7,7 +7,6 @@ import { Game } from '@cg/shared';
 import { Public } from '../common/decorators/public.decorator';
 
 @ApiTags('games')
-@ApiBearerAuth()
 @Controller('games')
 export class GamesController {
   constructor(private readonly gamesService: GamesService) {}

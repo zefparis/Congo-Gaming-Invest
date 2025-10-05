@@ -15,7 +15,7 @@ const EnvSchema = z.object({
   OTP_EXPIRY_SECONDS: z.coerce.number().default(300),
   OTP_RESEND_INTERVAL_SECONDS: z.coerce.number().default(60),
   OTP_MAX_ATTEMPTS: z.coerce.number().default(5),
-  CORS_ORIGIN: z.string().optional(),
+  CORS_ALLOWED_ORIGINS: z.string().optional(),
   LOG_LEVEL: z.string().optional(),
   THROTTLE_TTL: z.coerce.number().optional(),
   THROTTLE_LIMIT: z.coerce.number().optional(),
@@ -28,6 +28,7 @@ const EnvSchema = z.object({
     NestConfigModule.forRoot({
       isGlobal: true,
       cache: true,
+      envFilePath: ['apps/api/.env', '.env'],
       validate: (raw: Record<string, unknown>) => {
         const parsed = EnvSchema.safeParse(raw);
         if (!parsed.success) {
