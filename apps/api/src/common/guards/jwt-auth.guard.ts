@@ -1,12 +1,11 @@
-﻿// common/guards/jwt-auth-optional.guard.ts
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 @Injectable()
-export class JwtAuthOptionalGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector) {
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  constructor(private readonly reflector: Reflector) {
     super();
   }
 
@@ -15,7 +14,9 @@ export class JwtAuthOptionalGuard extends AuthGuard('jwt') {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) return true;
+    if (isPublic) {
+      return true;
+    }
     return super.canActivate(context);
   }
 }
