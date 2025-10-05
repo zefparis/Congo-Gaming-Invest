@@ -14,7 +14,7 @@ const logger = new Logger('DbService');
 
 @Injectable()
 export class DbService implements OnModuleInit, OnModuleDestroy {
-  private pool: Pool;
+  private pool!: Pool; // Using definite assignment assertion
   private readonly connectionEmitter = new EventEmitter();
   private isShuttingDown = false;
   private connectionAttempts = 0;
