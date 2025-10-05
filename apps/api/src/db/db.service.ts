@@ -90,41 +90,92 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     logger.log('=== Testing Database Connection ===');
-    const maxRetries = 3;
+    const maxRetries = 5; // Increased from 3 to 5
     let retryCount = 0;
     
+    // Helper function to get detailed error info
+    const getErrorDetails = (error: unknown) => {
+      if (error instanceof Error) {
+        const pgError = error as any;
+        return {
+          name: error.name,
+          message: error.message,
+          code: pgError.code || 'NO_CODE',
+          detail: pgError.detail || 'No details',
+          hint: pgError.hint || 'No hint',
+          stack: error.stack,
+          // Add any other PostgreSQL specific error properties
+          ...(pgError.severity && { severity: pgError.severity }),
+          ...(pgError.position && { position: pgError.position }),
+          ...(pgError.internalPosition && { internalPosition: pgError.internalPosition }),
+          ...(pgError.internalQuery && { internalQuery: pgError.internalQuery }),
+          ...(pgError.where && { where: pgError.where }),
+          ...(pgError.schema && { schema: pgError.schema }),
+          ...(pgError.table && { table: pgError.table }),
+          ...(pgError.column && { column: pgError.column }),
+          ...(pgError.dataType && { dataType: pgError.dataType }),
+          ...(pgError.constraint && { constraint: pgError.constraint }),
+        };
+      }
+      return { message: String(error) };
+    };
+
     while (retryCount < maxRetries) {
+      const attempt = retryCount + 1;
+      const start = Date.now();
+      
       try {
-        const start = Date.now();
-        logger.log(`Connection attempt ${retryCount + 1} of ${maxRetries}...`);
+        logger.log(`\n🔹 Connection attempt ${attempt} of ${maxRetries}...`);
         
-        // Test connection with a simple query
-        const result = await this.pool.query('SELECT $1::text as message', ['Database connection test']);
+        // Test with a simple query that includes connection info
+        const result = await this.pool.query(`
+          SELECT 
+            current_database() as database,
+            current_user as user,
+            inet_client_addr() as client_address,
+            inet_server_addr() as server_address,
+            version() as version,
+            now() as server_time,
+            $1::text as message
+        `, ['Database connection test']);
         
         const duration = Date.now() - start;
-        logger.log(`✅ Database connection successful (${duration}ms)`);
-        logger.debug('Connection test result:', result.rows[0]);
+        logger.log(`\n✅ Database connection successful (${duration}ms)`);
+        logger.log('Connection details:', {
+          database: result.rows[0].database,
+          user: result.rows[0].user,
+          clientAddress: result.rows[0].client_address,
+          serverAddress: result.rows[0].server_address,
+          version: result.rows[0].version,
+          serverTime: result.rows[0].server_time,
+        });
+        
         return; // Success - exit the function
         
       } catch (error: unknown) {
         retryCount++;
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        const errorCode = (error as any).code || 'UNKNOWN_ERROR';
+        const errorDetails = getErrorDetails(error);
+        const delayMs = Math.min(1000 * Math.pow(2, retryCount), 10000);
         
-        logger.error(`❌ Connection attempt ${retryCount} failed:`, {
-          error: errorMessage,
-          code: errorCode,
-          stack: error instanceof Error ? error.stack : undefined
+        logger.error(`\n❌ Connection attempt ${attempt} failed:`, {
+          attempt,
+          maxRetries,
+          error: errorDetails,
+          nextRetryIn: `${delayMs}ms`,
+          timestamp: new Date().toISOString()
         });
 
         if (retryCount >= maxRetries) {
-          logger.error('Maximum connection retries reached. Application will exit.');
+          logger.error('\n❌ Maximum connection retries reached. Application will exit.');
+          // Log the full error object for debugging
+          console.error('\n💥 FATAL DATABASE CONNECTION ERROR:', error);
           throw error; // Final retry failed, re-throw to prevent app from starting
         }
 
-        // Exponential backoff: wait longer between retries
-        const delayMs = Math.min(1000 * Math.pow(2, retryCount), 10000);
-        logger.log(`Retrying in ${delayMs}ms...`);
+        // Log a countdown for the retry
+        logger.log(`⏳ Retrying in ${delayMs/1000} seconds... (${maxRetries - retryCount} attempts remaining)\n`);
+        
+        // Add a small delay before retry
         await new Promise(resolve => setTimeout(resolve, delayMs));
       }
     }
