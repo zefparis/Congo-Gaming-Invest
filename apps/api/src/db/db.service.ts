@@ -1,4 +1,4 @@
-﻿import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import {
   Pool,
   type PoolClient,
@@ -13,7 +13,11 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
   private readonly pool: Pool;
 
   constructor(private readonly cfg: ConfigService) {
-    this.pool = new Pool({ connectionString: this.cfg.databaseUrl });
+    const sslMode = this.cfg.databaseSslMode;
+    this.pool = new Pool({
+      connectionString: this.cfg.databaseUrl,
+      ssl: sslMode === 'require' ? { rejectUnauthorized: false } : undefined,
+    });
   }
 
   async onModuleInit() {

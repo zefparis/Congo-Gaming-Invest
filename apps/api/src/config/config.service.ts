@@ -15,6 +15,11 @@ export class ConfigService {
     return v;
   }
 
+  get databaseSslMode(): 'disable' | 'require' {
+    const mode = this.config.get<'disable' | 'require'>('DATABASE_SSL_MODE');
+    return mode ?? 'disable';
+  }
+
   get jwtSecret(): string {
     const v = this.config.get<string>('JWT_SECRET');
     if (!v) throw new Error('JWT_SECRET is required');
