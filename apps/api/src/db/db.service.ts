@@ -31,10 +31,28 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
       throw new Error('Database URL is not defined. Please check your configuration.');
     }
     
+    // Remove any DATABASE_URL= prefix if present
+    const cleanUrl = url.replace(/^DATABASE_URL=/, '');
+    
     try {
-      return new URL(url);
-    } catch (error) {
-      throw new Error(`Invalid database URL: ${url}. Please ensure it follows the format: postgresql://user:password@host:port/database`);
+      const parsedUrl = new URL(cleanUrl);
+      
+      // Validate it's a postgresql URL
+      if (!parsedUrl.protocol.startsWith('postgres')) {
+        throw new Error('URL protocol must be postgresql://');
+      }
+      
+      // Validate required URL components
+      if (!parsedUrl.hostname || !parsedUrl.pathname || parsedUrl.pathname === '/') {
+        throw new Error('URL must include host and database name');
+      }
+      
+      return parsedUrl;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Unknown error occurred while parsing database URL';
+      throw new Error(`Invalid database URL: ${cleanUrl}. ${errorMessage}`);
     }
   }
 
