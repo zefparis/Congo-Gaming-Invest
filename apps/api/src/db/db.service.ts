@@ -13,10 +13,17 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
   private readonly pool: Pool;
 
   constructor(private readonly cfg: ConfigService) {
-    const sslMode = this.cfg.databaseSslMode;
+    const sslConfig = this.cfg.databaseSslMode === 'require' ? {
+      rejectUnauthorized: false,
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    } : undefined;
+
     this.pool = new Pool({
       connectionString: this.cfg.databaseUrl,
-      ssl: sslMode === 'require' ? { rejectUnauthorized: false } : undefined,
+      ssl: sslConfig
     });
   }
 
