@@ -1,15 +1,18 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from './config/config.module';
-import { DbModule } from './db/db.module';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { ConfigService } from './config/config.service';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { ThrottlerBehindProxyGuard } from './common/guards/throttler-behind-proxy.guard';
+import { ThrottlerModule } from '@nestjs/throttler';
+
+import { ConfigModule } from './config/config.module';
+import { ConfigService } from './config/config.service';
+import { DbModule } from './db/db.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { GamesModule } from './games/games.module';
+
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { ThrottlerBehindProxyGuard } from './common/guards/throttler-behind-proxy.guard';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
 import { HealthController } from './health/health.controller';
 
 @Module({
@@ -22,28 +25,20 @@ import { HealthController } from './health/health.controller';
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (config: ConfigService) => ({
-        throttlers: [{
-          ttl: config.throttleTtl,
-          limit: config.throttleLimit,
-        }],
+      useFactory: async (cfg: ConfigService) => ({
+        throttlers: [{ ttl: cfg.throttleTtl, limit: cfg.throttleLimit }],
       }),
     }),
   ],
-  controllers: [],
+  controllers: [HealthController],
   providers: [
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerBehindProxyGuard,
-    },
+    { provide: APP_FILTER, useClass: HttpExceptionFilter },
+    { provide: APP_GUARD,  useClass: JwtAuthGuard },
+    { provide: APP_GUARD,  useClass: ThrottlerBehindProxyGuard },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorrelationIdMiddleware).forRoutes('*');
+  }
+}

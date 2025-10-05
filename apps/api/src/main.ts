@@ -1,47 +1,76 @@
+// apps/api/src/main.ts
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module.js';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
-import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware.js';
-import { setupSwagger } from './common/config/swagger.config.js';
-import { ConfigService as NestConfig } from '@nestjs/config'; // OK pour bootstrap
+import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+
+/**
+ * Parse CSV "a,b,c" -> ["a","b","c"]
+ */
+function parseCsv(val?: string) {
+  return (val ?? '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Origin matcher: supporte exact match + wildcard *.vercel.app
+ */
+function makeCorsOrigin(allow: string[]) {
+  if (allow.length === 0) return false; // bloque tout par défaut
+  return (origin: string | undefined, cb: (err: Error | null, ok?: boolean) => void) => {
+    if (!origin) return cb(null, true); // curl / SSR
+    const ok =
+      allow.includes(origin) ||
+      (origin.endsWith('.vercel.app') && allow.some(a => a === 'https://*.vercel.app'));
+    cb(null, ok);
+  };
+}
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bufferLogs: true,
+  });
 
-  // Global prefix
-  app.setGlobalPrefix('v1');
+  // Prefix API optionnel (évite le double /v1 si tes controllers ont déjà /v1/...)
+  const apiPrefix = process.env.API_PREFIX?.trim();
+  if (apiPrefix) app.setGlobalPrefix(apiPrefix);
 
-  // Middleware
-  app.use(CorrelationIdMiddleware);
-
-  // ❌ plus de ValidationPipe global (on reste Zod @UsePipes par route)
-  // app.useGlobalPipes(new ValidationPipe({...}));
+  // ❌ NE PAS utiliser une classe middleware ici:
+  // app.use(CorrelationIdMiddleware); // <-- on l'applique via consumer dans AppModule
 
   // Global filters
   app.useGlobalFilters(new HttpExceptionFilter());
-  // CORS (filtre valeurs vides)
-  const nestCfg = app.get(NestConfig);
-  const corsCsv = nestCfg.get<string>('CORS_ORIGIN', '') ?? '';
-  const origins = corsCsv.split(',').map(s => s.trim()).filter(Boolean);
-  if (!origins.length) {
-    // TODO: préciser l'allowlist finale avec les domaines prod (ajout auto des Vercel domains pour la démo)
-    origins.push('https://congo-gaming-invest.vercel.app', 'https://*.vercel.app');
-  }
 
+  // CORS
+  const origins = parseCsv(process.env.CORS_ALLOWED_ORIGINS);
   app.enableCors({
-    origin: origins,
+    origin: makeCorsOrigin(origins),
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
 
-  const port = nestCfg.get<number>('PORT', 4000);
-  await app.listen(port);
-  console.log(`API up: http://localhost:${port}`);
-  console.log(`Swagger: http://localhost:${port}/docs`);
+  // Swagger (active en non-prod si tu as setupSwagger)
+  try {
+    if (process.env.NODE_ENV !== 'production') {
+      const { setupSwagger } = await import('./common/config/swagger.config');
+      setupSwagger(app);
+    }
+  } catch {
+    // no-op si pas de swagger
+  }
+
+  const port = Number(process.env.PORT ?? 4000);
+  await app.listen(port, '0.0.0.0');
+  // petit log runtime utile en container
+  // eslint-disable-next-line no-console
+  console.log(`API up on :${port}`);
 }
 
 bootstrap().catch((err) => {
+  // eslint-disable-next-line no-console
   console.error('Failed to start the application', err);
   process.exit(1);
 });
