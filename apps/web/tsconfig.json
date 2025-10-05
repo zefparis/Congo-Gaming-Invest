@@ -20,7 +20,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-    "@cg/shared": ["../../packages/shared/src"] 
+      "@/*": ["src/*"],
+      "@cg/shared": ["../../packages/shared/src"]
     }
   },
   "include": ["src"],
